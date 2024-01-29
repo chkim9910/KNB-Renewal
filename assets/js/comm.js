@@ -73,9 +73,6 @@ $(function () {
       mNav.addClass("active");
       body.css({ overflow: "hidden" });
     }
-    // menu.addClass("active");
-    // mNav.addClass("active");
-    // body.css({ overflow: "hidden" });
 
     // 현재 $header의 배경색 확인
     const currentBackgroundColor = $header.css("background-color");
