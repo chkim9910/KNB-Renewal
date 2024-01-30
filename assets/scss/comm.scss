@@ -421,8 +421,8 @@
     height: 45px;
     // background: rgba(255, 255, 255, 0.1);
     // background: rgb(203, 172, 223, 1);
-    background: rgb(217, 43, 43, 0.6);
-    backdrop-filter: blur(5px);
+    background: rgb(217, 43, 43, 0.1);
+    backdrop-filter: blur(2px);
     border-radius: 45px;
     text-align: center;
     line-height: 45px;
@@ -432,9 +432,6 @@
     right: 65px;
     &:hover {
       background: $secondary;
-      .goto-top-icon {
-        color: $primaryWhite;
-      }
     }
   }
   .goto-top-icon-box {
@@ -449,6 +446,9 @@
     width: 100%;
     height: 100%;
     line-height: 45px;
+    &:hover {
+      color: $primaryWhite;
+    }
   }
 }
 @media screen and (max-width: 1280px) {
