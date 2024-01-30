@@ -420,7 +420,8 @@
     width: 45px;
     height: 45px;
     // background: rgba(255, 255, 255, 0.1);
-    background: rgb(203, 172, 223, 0.8);
+    // background: rgb(203, 172, 223, 1);
+    background: rgb(217, 43, 43, 0.6);
     backdrop-filter: blur(5px);
     border-radius: 45px;
     text-align: center;
@@ -429,8 +430,11 @@
     position: fixed;
     top: 900px;
     right: 65px;
-    &.active {
-      background: blueviolet;
+    &:hover {
+      background: $secondary;
+      .goto-top-icon {
+        color: $primaryWhite;
+      }
     }
   }
   .goto-top-icon-box {
@@ -439,6 +443,7 @@
     height: 100%;
   }
   .goto-top-icon {
+    color: $primaryWhite;
     font-size: 30px;
     display: block;
     width: 100%;
