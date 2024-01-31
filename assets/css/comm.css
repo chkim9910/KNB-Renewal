@@ -660,7 +660,13 @@ button {
     transition: all 0.3s;
   }
 }
-#header .goto-top {
+
+@media screen and (max-width: 1280px) {
+  #header {
+    height: 60px;
+  }
+}
+.goto-top {
   width: 45px;
   height: 45px;
   background: rgba(217, 43, 43, 0.1);
@@ -670,19 +676,21 @@ button {
   text-align: center;
   line-height: 45px;
   position: fixed;
-  position: fixed;
-  top: 900px;
+  bottom: 40px;
   right: 25px;
+  z-index: 100;
 }
-#header .goto-top:hover {
+.goto-top:hover {
   background: #d92b2b;
 }
-#header .goto-top-icon-box {
+
+.goto-top-icon-box {
   display: block;
   width: 100%;
   height: 100%;
 }
-#header .goto-top-icon {
+
+.goto-top-icon {
   color: #fff;
   font-size: 30px;
   display: block;
@@ -690,15 +698,10 @@ button {
   height: 100%;
   line-height: 45px;
 }
-#header .goto-top-icon:hover {
+.goto-top-icon:hover {
   color: #fff;
 }
 
-@media screen and (max-width: 1280px) {
-  #header {
-    height: 60px;
-  }
-}
 .section {
   height: 500px;
   background: #222;
