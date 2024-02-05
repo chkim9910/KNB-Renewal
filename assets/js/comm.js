@@ -163,7 +163,7 @@ $(function () {
       );
   });
   // --------------------sub2--------------------
-  //  이미지 주소 배열
+  // 이미지 주소 배열
   const imageUrls = [
     "images/sub2/perfermance-info/poster-1.jpg",
     "images/sub2/perfermance-info/poster-2.jpg",
@@ -202,8 +202,6 @@ $(function () {
 
   // 애니메이션 함수
   function startAnimation() {
-    // *****performance-info*****
-    gsap.registerPlugin(ScrollTrigger);
     const txtWrap = $(".performance-info .txt-wrap");
     const behindTit = $(".behind-tit");
 
@@ -336,45 +334,68 @@ $(function () {
 
     // *****before-monthly-schedule*****
     const beforeSchedule = $(".before-monthly-schedule");
-    // const beforeScheduleBf = $(".before-monthly-schedule::before");
-    gsap.set(beforeSchedule, {
-      // xPercent: -100,
-      autoAlpha: 0,
-    });
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: beforeSchedule,
-          start: "top center",
-          end: "center center",
-          scrub: 0.5,
-        },
-      })
-      .to(beforeSchedule, {
-        // xPercent: 0,
-        autoAlpha: 1,
-      });
 
-    const txtElements = gsap.utils.toArray(".highlight-tit");
-    txtElements.forEach((text) => {
-      gsap.to(text, {
-        backgroundSize: "100%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: text,
-          start: "top bottom",
-          end: "top 60%",
-          scrub: true,
-          // markers: true,
-        },
+    const setInitialProperties = () => {
+      gsap.set(beforeSchedule, {
+        autoAlpha: 0,
       });
-    });
+    };
+
+    const createTimeline = (start, end) => {
+      return gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: beforeSchedule,
+            start: start,
+            end: end,
+            scrub: 0.5,
+          },
+        })
+        .to(beforeSchedule, {
+          autoAlpha: 1,
+        });
+    };
+
+    const animateText = (trigger, end) => {
+      const txtElements = gsap.utils.toArray(".highlight-tit");
+      txtElements.forEach((text) => {
+        gsap.to(text, {
+          backgroundSize: "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: text,
+            start: "top bottom",
+            end: end,
+            scrub: true,
+          },
+        });
+      });
+    };
+
+    const handleWindowWidth = () => {
+      if ($window.innerWidth() >= 768) {
+        createTimeline("top center", "center center");
+        animateText("top bottom", "top 60%");
+      } else {
+        createTimeline("top bottom", "center center");
+        animateText("top bottom", "top 60%");
+      }
+
+      setInitialProperties();
+    };
+
+    handleWindowWidth();
+    $window.on("resize", handleWindowWidth);
+    ScrollTrigger.refresh();
 
     // *****monthly-schedule*****
     const monthlySchedule = $(".monthly-schedule");
     const calendar = $(".calendar");
-    const ms_txtWrap = $(".monthly-schedule .txt-wrap");
+    // const ms_txtWrap = $(".monthly-schedule .txt-wrap");
+    const ms_tit = $(".monthly-schedule .txt-wrap .tit");
+    const ms_subtit = $(".monthly-schedule .txt-wrap .sub-tit");
     const ms_behindTit = $(".monthly-schedule .behind-tit");
+
     gsap.set(calendar, {
       y: 100,
       autoAlpha: 0,
@@ -389,107 +410,246 @@ $(function () {
         },
       })
       .fromTo(
-        ms_txtWrap,
+        [ms_tit, ms_subtit, ms_behindTit],
         { y: 100, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8 }
       )
-      .fromTo(
-        behindTit,
-        { x: 100, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.6 }
-      )
+      // .fromTo(
+      //   ms_behindTit,
+      //   { x: 100, opacity: 0 },
+      //   { x: 0, opacity: 1, duration: 0.6 }
+      // )
       .to(calendar, {
         y: 0,
         autoAlpha: 1,
       });
 
     // *****chronological-list*****
-    const chronologicalList = $(".chronological-list");
-    const scrollWrap1 = $(".scroll-1");
-    const scrollWrap2 = $(".scroll-2");
-    const scrollCont1 = $(".scroll-1 .scroll-contents-box");
-    const scrollCont2 = $(".scroll-2 .scroll-contents-box");
-    const cl_txtWrap = $(".chronological-list .txt-wrap");
-    const cl_behindTit = $(".chronological-list .behind-tit");
-    gsap.set(scrollWrap1, {
-      y: 100,
-      autoAlpha: 0,
-    });
+    function throttle(func, limit) {
+      let inThrottle;
+      return function () {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => (inThrottle = false), limit);
+        }
+      };
+    }
+    function handleResizeThrottled() {
+      const chronologicalList = $(".chronological-list");
+      const scrollWrap1 = $(".scroll-1");
+      const scrollWrap2 = $(".scroll-2");
+      const scrollCont1 = $(".scroll-1 .scroll-contents-box");
+      const scrollCont2 = $(".scroll-2 .scroll-contents-box");
+      const cl_tit = $(".chronological-list .txt-wrap .tit");
+      const cl_subtit = $(".chronological-list .txt-wrap .sub-tit");
+      // const scrollCont1Tit = $(".scroll-1 .scroll-tit");
+      // const scrollCont2Tit = $(".scroll-2 .scroll-tit");
+      const scrollCont1TitMob = $(".scroll-1 .scroll-tit-mob");
+      const scrollCont2TitMob = $(".scroll-2 .scroll-tit-mob");
+      const cl_behindTit = $(".chronological-list .behind-tit");
+      if ($window.innerWidth() >= 768) {
+        gsap.set(scrollWrap1, {
+          y: 100,
+          autoAlpha: 0,
+        });
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: chronologicalList,
+              start: "top 80%",
+              end: "center center",
+              scrub: 0.5,
+            },
+            onStart: () => console.log("Animation started"),
+            onComplete: () => console.log("Animation completed"),
+          })
+
+          .fromTo(
+            [cl_tit, cl_subtit, cl_behindTit],
+            { y: 100, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5 }
+          )
+          // .fromTo(
+          //   cl_behindTit,
+          //   { x: 100, opacity: 0 },
+          //   { x: 0, opacity: 1, duration: 0.6 }
+          // )
+          .to(scrollWrap1, {
+            y: 0,
+            autoAlpha: 1,
+            duration: 1,
+            delay: 1,
+          });
+
+        const scrollWrap1Tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: scrollWrap1,
+            pin: scrollWrap1,
+            // pinSpacing: false,
+            start: "top top",
+            end: "+=120%",
+            scrub: 0.5,
+            // markers: true,
+          },
+        });
+        scrollWrap1Tl.fromTo(
+          scrollCont1,
+          {
+            yPercent: 50,
+            opacity: 1,
+          },
+          {
+            yPercent: -80,
+            opacity: 1,
+          }
+        );
+
+        const scrollWrap2Tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: scrollWrap2,
+            pin: scrollWrap2,
+            // pinSpacing: false,
+            start: "top top",
+            end: "+=120%",
+            scrub: 0.5,
+            // markers: true,
+          },
+        });
+        scrollWrap2Tl.fromTo(
+          scrollCont2,
+          {
+            yPercent: 50,
+            opacity: 1,
+          },
+          {
+            yPercent: -80,
+            opacity: 1,
+          }
+        );
+      } else {
+        gsap.set(calendar, {
+          y: 100,
+          autoAlpha: 0,
+        });
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: chronologicalList,
+              start: "top bottom",
+              end: "center center",
+              scrub: 0.5,
+            },
+          })
+          .fromTo(
+            [cl_tit, cl_subtit, cl_behindTit],
+            { y: 100, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5 }
+          )
+          // .fromTo(
+          //   cl_behindTit,
+          //   { x: 100, opacity: 0 },
+          //   { x: 0, opacity: 1, duration: 0.5 }
+          // )
+          .to(scrollWrap1, {
+            y: 0,
+            autoAlpha: 1,
+            // duration: 1,
+            delay: 1,
+          });
+
+        gsap.set([scrollCont1, scrollCont2], {
+          y: 0,
+          autoAlpha: 1,
+        });
+        const scrollWrap1Tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: scrollWrap1,
+            start: "top bottom",
+            end: "+=120%",
+            scrub: 0.5,
+            delay: 1,
+          },
+        });
+        scrollWrap1Tl.fromTo(
+          [scrollCont1TitMob, scrollCont1],
+          {
+            y: 100,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.2,
+          }
+        );
+
+        const scrollWrap2Tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: scrollWrap2,
+            start: "top bottom",
+            end: "+=120%",
+            scrub: 0.5,
+          },
+        });
+        scrollWrap2Tl.fromTo(
+          [scrollCont2TitMob, scrollCont2],
+          {
+            y: 100,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.2,
+          }
+        );
+      }
+    }
+
+    const throttledHandleResize = throttle(handleResizeThrottled, 200); // Adjust the throttling time as needed
+    // 초기에 실행
+    throttledHandleResize();
+    // handleResize();
+    ScrollTrigger.refresh();
+    // 창 크기가 변경될 때마다 실행
+    $window.on("resize", throttledHandleResize);
+
+    // *****more-chronological-list*****
+    const moreCl = $(".more-chronological-list");
+    const moreClFi = $(".more-chronological-list-file-info");
     gsap
       .timeline({
         scrollTrigger: {
-          trigger: chronologicalList,
-          start: "top 80%",
+          trigger: moreCl,
+          start: "top bottom",
           end: "center center",
           scrub: 0.5,
         },
       })
-      .from(cl_behindTit, {
-        x: 100,
-        opacity: 0,
+      .fromTo(
+        moreCl,
+        { y: 100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 }
+      );
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: moreClFi,
+          start: "top bottom",
+          end: "center center",
+          scrub: 0.5,
+        },
       })
       .fromTo(
-        cl_txtWrap,
+        moreClFi,
         { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5 }
-      )
-      .to(cl_behindTit, { x: 0, opacity: 1, duration: 0.6, delay: 0.5 })
-      .to(scrollWrap1, {
-        y: 0,
-        autoAlpha: 1,
-        duration: 1,
-        delay: 1,
-      });
-
-    const scrollWrap1Tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollWrap1,
-        pin: scrollWrap1,
-        // pinSpacing: false,
-        start: "top top",
-        end: "+=120%",
-        scrub: 0.5,
-        // markers: true,
-      },
-    });
-    scrollWrap1Tl.fromTo(
-      scrollCont1,
-      {
-        yPercent: 50,
-        opacity: 1,
-      },
-      {
-        yPercent: -80,
-        opacity: 1,
-      }
-    );
-
-    const scrollWrap2Tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollWrap2,
-        pin: scrollWrap2,
-        // pinSpacing: false,
-        start: "top top",
-        end: "+=120%",
-        scrub: 0.5,
-        // markers: true,
-      },
-    });
-    scrollWrap2Tl.fromTo(
-      scrollCont2,
-      {
-        yPercent: 50,
-        opacity: 1,
-      },
-      {
-        yPercent: -80,
-        opacity: 1,
-      }
-    );
-    // chronologicalListTl.add(scrollWrap1Tl, "-=0.2");
-    // chronologicalListTl.add(scrollWrap2Tl, "-=0.2");
-
-    // *****more-chronological-list*****
+        { y: 0, opacity: 1, duration: 1 }
+      );
     var swiper = new Swiper(".swiper-more-chronological-list", {
       slidesPerView: 2,
       spaceBetween: 30,
@@ -497,7 +657,15 @@ $(function () {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
+      breakpoints: {
+        360: {
+          slidesPerView: 1,
+          spaceBetween: 30,
+        },
+        768: {
+          slidesPerView: 2,
+        },
+      },
     });
   }
 });
-// );
